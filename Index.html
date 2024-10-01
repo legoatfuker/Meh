@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Device Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Media Device Information</h1>
+    <button id="getDevices">Get Media Devices</button>
+    <ul id="deviceList"></ul>
+
+    <script>
+        document.getElementById('getDevices').addEventListener('click', async () => {
+            // Clear previous device list
+            const deviceList = document.getElementById('deviceList');
+            deviceList.innerHTML = '';
+
+            try {
+                // Request access to media devices
+                await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+                // If permission granted, get the list of media devices
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                devices.forEach(device => {
+                    // Create a list item for each device
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${device.kind}: ${device.label || 'Unknown'} (ID: ${device.deviceId || 'No ID'})`;
+                    deviceList.appendChild(listItem);
+                });
+            } catch (err) {
+                console.error('Error accessing media devices:', err);
+                const errorItem = document.createElement('li');
+                errorItem.textContent = 'Error accessing media devices: ' + err.message;
+                deviceList.appendChild(errorItem);
+            }
+        });
+    </script>
+</body>
+</html>
